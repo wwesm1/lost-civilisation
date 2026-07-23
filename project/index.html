@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Lost Civilization — An interactive cinematic journey through forgotten ruins buried beneath endless desert sands." />
+    <title>Lost Civilization — An Interactive Journey</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <!-- ===== LOADING SCREEN ===== -->
+    <div class="loader" id="loader" role="status" aria-live="polite" aria-label="Loading experience">
+      <div class="loader__dust" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <div class="loader__symbol" aria-hidden="true">
+        <svg viewBox="0 0 200 200">
+          <circle class="ring ring-outer" cx="100" cy="100" r="90" />
+          <circle class="ring ring-inner" cx="100" cy="100" r="65" />
+          <path class="glyph" d="M100 30 L130 70 L170 80 L140 115 L150 160 L100 135 L50 160 L60 115 L30 80 L70 70 Z" />
+          <circle class="glyph glyph-dot" cx="100" cy="100" r="5" />
+          <path class="glyph" d="M100 50 L100 150 M70 100 L130 100" stroke-dasharray="200" stroke-dashoffset="200" style="animation-delay: 0.5s;" />
+        </svg>
+      </div>
+      <div class="loader__text">Awakening the Past</div>
+      <div class="loader__progress"><div class="loader__progress-bar" id="loaderBar"></div></div>
+      <div class="loader__percent" id="loaderPercent">0%</div>
+    </div>
+
+    <!-- ===== CUSTOM CURSOR ===== -->
+    <div class="cursor" id="cursor" aria-hidden="true">
+      <div class="cursor__ring" id="cursorRing"></div>
+      <div class="cursor__dot" id="cursorDot"></div>
+    </div>
+
+    <!-- ===== AMBIENT BACKDROP ===== -->
+    <canvas class="ambient-canvas" id="ambientCanvas" aria-hidden="true"></canvas>
+    <div class="fog-overlay" aria-hidden="true"></div>
+    <div class="vignette" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <!-- ===== NAVIGATION ===== -->
+    <nav class="nav" id="nav" role="navigation" aria-label="Main navigation">
+      <a href="#hero" class="nav__brand" data-cursor>
+        <span class="brand-mark">◈</span>
+        Lost <span>Civilization</span>
+      </a>
+      <ul class="nav__links">
+        <li><a href="#desert" class="nav__link" data-cursor>Desert</a></li>
+        <li><a href="#gates" class="nav__link" data-cursor>Gates</a></li>
+        <li><a href="#hall" class="nav__link" data-cursor>Kings</a></li>
+        <li><a href="#library" class="nav__link" data-cursor>Library</a></li>
+        <li><a href="#chamber" class="nav__link" data-cursor>Chamber</a></li>
+        <li><a href="#sanctuary" class="nav__link" data-cursor>Sanctuary</a></li>
+      </ul>
+      <button class="nav__menu-toggle" id="menuToggle" aria-label="Open menu" data-cursor>
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+
+    <!-- ===== MOBILE MENU ===== -->
+    <div class="mobile-menu" id="mobileMenu" role="dialog" aria-label="Mobile menu">
+      <a href="#desert" data-cursor>Desert</a>
+      <a href="#gates" data-cursor>Gates</a>
+      <a href="#hall" data-cursor>Kings</a>
+      <a href="#library" data-cursor>Library</a>
+      <a href="#chamber" data-cursor>Chamber</a>
+      <a href="#sanctuary" data-cursor>Sanctuary</a>
+    </div>
+
+    <!-- ===== PROGRESS INDICATOR ===== -->
+    <div class="progress" id="progress" aria-hidden="true">
+      <div class="progress__label" id="progressLabel">01 — Hero</div>
+      <div class="progress__track">
+        <div class="progress__bar" id="progressBar"></div>
+      </div>
+    </div>
+
+    <div class="progress-dots" id="progressDots" aria-hidden="true">
+      <button class="progress-dots__dot is-active" data-section="hero" aria-label="Hero"></button>
+      <button class="progress-dots__dot" data-section="desert" aria-label="Desert"></button>
+      <button class="progress-dots__dot" data-section="gates" aria-label="Gates"></button>
+      <button class="progress-dots__dot" data-section="hall" aria-label="Hall of Kings"></button>
+      <button class="progress-dots__dot" data-section="library" aria-label="Library"></button>
+      <button class="progress-dots__dot" data-section="chamber" aria-label="Chamber"></button>
+      <button class="progress-dots__dot" data-section="sanctuary" aria-label="Sanctuary"></button>
+    </div>
+
+    <!-- ===== AUDIO TOGGLE ===== -->
+    <button class="audio-toggle" id="audioToggle" aria-label="Toggle ambient sound" data-cursor>
+      <div class="audio-toggle__icon">
+        <span></span><span></span><span></span><span></span>
+      </div>
+    </button>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main id="app">
+
+      <!-- HERO -->
+      <section class="hero" id="hero" aria-label="Hero — The Forgotten Temple">
+        <div class="hero__layer hero__dunes" data-parallax="0.3">
+          <svg viewBox="0 0 1440 400" preserveAspectRatio="none">
+            <path class="dune-fill" d="M0 250 Q200 180 400 220 T800 200 T1200 230 T1440 190 V400 H0 Z" opacity="0.5"/>
+            <path class="dune-fill" d="M0 300 Q300 240 600 280 T1200 260 T1440 290 V400 H0 Z" opacity="0.7"/>
+            <path class="dune-fill" d="M0 350 Q400 310 800 340 T1440 320 V400 H0 Z"/>
+          </svg>
+        </div>
+
+        <div class="hero__temple" id="heroTemple" data-parallax="0.15">
+          <svg viewBox="0 0 900 500" preserveAspectRatio="xMidYMax meet">
+            <!-- Temple base -->
+            <rect class="temple-fill" x="150" y="420" width="600" height="80" />
+            <!-- Columns -->
+            <rect class="temple-fill" x="180" y="250" width="30" height="170" />
+            <rect class="temple-fill" x="260" y="250" width="30" height="170" />
+            <rect class="temple-fill" x="340" y="250" width="30" height="170" />
+            <rect class="temple-fill" x="530" y="250" width="30" height="170" />
+            <rect class="temple-fill" x="610" y="250" width="30" height="170" />
+            <rect class="temple-fill" x="690" y="250" width="30" height="170" />
+            <!-- Pediment (triangle roof) -->
+            <polygon class="temple-fill" points="120,250 450,120 780,250" />
+            <!-- Architrave -->
+            <rect class="temple-fill" x="120" y="240" width="660" height="20" />
+            <!-- Inner sanctum -->
+            <rect class="temple-shadow" x="400" y="260" width="100" height="160" />
+            <!-- Steps -->
+            <rect class="temple-fill" x="100" y="490" width="700" height="10" />
+            <rect class="temple-fill" x="80" y="480" width="740" height="10" opacity="0.8" />
+            <!-- Glow behind -->
+            <ellipse class="temple-glow" cx="450" cy="200" rx="200" ry="100" />
+          </svg>
+        </div>
+
+        <div class="hero__content">
+          <div class="hero__eyebrow" id="heroEyebrow">An Interactive Journey</div>
+          <h1 class="hero__title" data-splitting>Lost Civilization</h1>
+          <p class="hero__subtitle" id="heroSubtitle">
+            Beneath the endless sands lies a world forgotten by time,<br />
+            waiting to be awakened once more.
+          </p>
+          <div class="hero__cta" id="heroCta">
+            <a href="#desert" class="magnetic" data-cursor>
+              <button class="btn btn--primary" data-cursor>
+                Begin the Journey
+                <span class="btn__arrow">→</span>
+              </button>
+            </a>
+          </div>
+        </div>
+
+        <div class="hero__scroll-hint" aria-hidden="true">
+          <span>Scroll to descend</span>
+          <div class="scroll-line"></div>
+        </div>
+      </section>
+
+      <!-- THE DESERT -->
+      <section class="section desert" id="desert" aria-label="Chapter I — The Desert">
+        <div class="section__inner desert__inner">
+          <header class="section__header desert__header">
+            <span class="section__index">Chapter I</span>
+            <h2 class="desert__title" data-splitting>The Desert</h2>
+            <p class="desert__lead">
+              The wind carries echoes of those who walked here long ago.
+              Each grain of sand holds a memory, each broken stone a whisper of the past.
+            </p>
+          </header>
+
+          <div class="desert__statues">
+            <div class="desert__statue" data-reveal>
+              <svg viewBox="0 0 120 280" preserveAspectRatio="xMidYMax meet">
+                <path class="statue-body" d="M60 10 Q50 10 48 25 L46 50 Q40 55 38 70 L35 100 L30 140 L28 180 L25 220 L20 270 L95 270 L90 220 L88 180 L85 140 L82 100 L78 70 Q76 55 70 50 L68 25 Q66 10 60 10 Z"/>
+                <path class="statue-dark" d="M60 25 L60 270 L75 270 L72 220 L70 180 L68 140 L65 100 L62 70 L60 50 L60 25 Z" opacity="0.4"/>
+                <path class="statue-crack" d="M55 80 L58 120 L52 160 L56 200"/>
+                <circle cx="52" cy="35" r="2" fill="rgba(0,0,0,0.3)"/>
+                <circle cx="68" cy="35" r="2" fill="rgba(0,0,0,0.3)"/>
+              </svg>
+            </div>
+            <div class="desert__statue" data-reveal>
+              <svg viewBox="0 0 120 280" preserveAspectRatio="xMidYMax meet">
+                <path class="statue-body" d="M60 5 Q45 5 42 20 L40 45 Q30 50 28 65 L25 95 L22 135 L20 175 L18 215 L15 270 L105 270 L102 215 L100 175 L98 135 L95 95 L92 65 Q90 50 80 45 L78 20 Q75 5 60 5 Z"/>
+                <path class="statue-dark" d="M60 20 L60 270 L85 270 L82 215 L80 175 L78 135 L75 95 L72 65 L70 45 L70 20 L60 20 Z" opacity="0.4"/>
+                <path class="statue-crack" d="M50 60 L55 100 L48 140 L52 180 L48 220"/>
+                <path class="statue-crack" d="M70 40 L72 80 L68 120"/>
+              </svg>
+            </div>
+            <div class="desert__statue" data-reveal>
+              <svg viewBox="0 0 120 280" preserveAspectRatio="xMidYMax meet">
+                <path class="statue-body" d="M60 15 Q52 15 50 28 L48 52 Q42 57 40 72 L37 102 L34 142 L32 182 L30 222 L27 270 L93 270 L90 222 L88 182 L86 142 L83 102 L80 72 Q78 57 72 52 L70 28 Q68 15 60 15 Z"/>
+                <path class="statue-dark" d="M60 28 L60 270 L78 270 L75 222 L73 182 L71 142 L68 102 L65 72 L63 52 L63 28 L60 28 Z" opacity="0.4"/>
+                <path class="statue-crack" d="M55 90 L58 130 L53 170 L57 210"/>
+                <circle cx="53" cy="38" r="1.5" fill="rgba(0,0,0,0.3)"/>
+                <circle cx="67" cy="38" r="1.5" fill="rgba(0,0,0,0.3)"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="desert__columns" data-reveal>
+            <div class="desert__column">
+              <svg viewBox="0 0 60 200" preserveAspectRatio="xMidYMax meet">
+                <rect class="col-cap" x="5" y="0" width="50" height="10"/>
+                <rect class="col-fill" x="15" y="10" width="30" height="170"/>
+                <rect class="col-cap" x="5" y="180" width="50" height="10"/>
+              </svg>
+            </div>
+            <div class="desert__column">
+              <svg viewBox="0 0 60 200" preserveAspectRatio="xMidYMax meet">
+                <rect class="col-cap" x="5" y="0" width="50" height="10"/>
+                <rect class="col-fill" x="15" y="10" width="30" height="170"/>
+                <rect class="col-cap" x="5" y="180" width="50" height="10"/>
+              </svg>
+            </div>
+            <div class="desert__column">
+              <svg viewBox="0 0 60 200" preserveAspectRatio="xMidYMax meet">
+                <rect class="col-cap" x="5" y="0" width="50" height="10"/>
+                <rect class="col-fill" x="15" y="10" width="30" height="170"/>
+                <rect class="col-cap" x="5" y="180" width="50" height="10"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ANCIENT GATES -->
+      <section class="section gates" id="gates" aria-label="Chapter II — The Ancient Gates">
+        <div class="section__inner gates__inner">
+          <header class="section__header gates__header">
+            <span class="section__index">Chapter II</span>
+            <h2 class="gates__title" data-splitting>The Ancient Gates</h2>
+            <p class="gates__lead">
+              Massive doors stand sentinel across the centuries.
+              As you draw near, they yield — slowly, reluctantly — as if remembering your arrival.
+            </p>
+          </header>
+
+          <div class="gates__doors" id="gatesDoors">
+            <div class="gates__arch"></div>
+            <div class="gates__frame">
+              <div class="gates__door gates__door--left" id="gateLeft"></div>
+              <div class="gates__door gates__door--right" id="gateRight"></div>
+              <div class="gates__light" id="gateLight"></div>
+              <div class="gates__dust" aria-hidden="true">
+                <span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span><span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- HALL OF KINGS -->
+      <section class="section hall" id="hall" aria-label="Chapter III — Hall of Kings">
+        <div class="section__inner hall__inner">
+          <header class="section__header hall__header">
+            <span class="section__index">Chapter III</span>
+            <h2 class="hall__title" data-splitting>Hall of Kings</h2>
+            <p class="hall__lead">
+              Stone sovereigns line the corridor, their gaze unwavering through millennia.
+              At your presence, ancient eyes rekindle — and the walls remember.
+            </p>
+          </header>
+
+          <div class="hall__statues">
+            <div class="hall__statue-card" data-reveal data-cursor>
+              <svg viewBox="0 0 150 250" preserveAspectRatio="xMidYMax meet">
+                <path class="statue-stone" d="M75 10 Q60 10 55 25 L50 50 Q40 55 35 70 L30 100 L25 140 L22 180 L20 250 L130 250 L128 180 L125 140 L120 100 L115 70 Q110 55 100 50 L95 25 Q90 10 75 10 Z"/>
+                <path class="statue-shadow" d="M75 25 L75 250 L100 250 L97 180 L95 140 L90 100 L87 70 L85 50 L85 25 L75 25 Z" opacity="0.4"/>
+              </svg>
+              <div class="hall__statue-eyes"><span></span><span></span></div>
+              <div class="hall__statue-cracks">
+                <svg viewBox="0 0 150 250" preserveAspectRatio="none">
+                  <path class="crack-line" d="M65 60 L70 100 L62 140 L68 180 L64 220"/>
+                  <path class="crack-line" d="M85 40 L88 80 L82 120"/>
+                </svg>
+              </div>
+              <div class="hall__statue-name">Aureth the First</div>
+            </div>
+
+            <div class="hall__statue-card" data-reveal data-cursor>
+              <svg viewBox="0 0 150 250" preserveAspectRatio="xMidYMax meet">
+                <path class="statue-stone" d="M75 5 Q58 5 53 20 L48 45 Q35 50 30 65 L25 95 L22 135 L20 175 L18 250 L132 250 L130 175 L128 135 L125 95 L120 65 Q115 50 102 45 L97 20 Q92 5 75 5 Z"/>
+                <path class="statue-shadow" d="M75 20 L75 250 L100 250 L97 175 L95 135 L90 95 L87 65 L85 45 L85 20 L75 20 Z" opacity="0.4"/>
+              </svg>
+              <div class="hall__statue-eyes"><span></span><span></span></div>
+              <div class="hall__statue-cracks">
+                <svg viewBox="0 0 150 250" preserveAspectRatio="none">
+                  <path class="crack-line" d="M60 50 L65 90 L58 130 L62 170 L56 210"/>
+                  <path class="crack-line" d="M85 30 L88 70 L82 110 L86 150"/>
+                </svg>
+              </div>
+              <div class="hall__statue-name">Vael the Wise</div>
+            </div>
+
+            <div class="hall__statue-card" data-reveal data-cursor>
+              <svg viewBox="0 0 150 250" preserveAspectRatio="xMidYMax meet">
+                <path class="statue-stone" d="M75 15 Q62 15 57 28 L52 52 Q42 57 37 72 L32 102 L28 142 L25 182 L22 250 L128 250 L125 182 L122 142 L118 102 L113 72 Q108 57 98 52 L93 28 Q88 15 75 15 Z"/>
+                <path class="statue-shadow" d="M75 28 L75 250 L98 250 L95 182 L92 142 L87 102 L82 72 L80 52 L80 28 L75 28 Z" opacity="0.4"/>
+              </svg>
+              <div class="hall__statue-eyes"><span></span><span></span></div>
+              <div class="hall__statue-cracks">
+                <svg viewBox="0 0 150 250" preserveAspectRatio="none">
+                  <path class="crack-line" d="M68 70 L72 110 L66 150 L70 190"/>
+                  <path class="crack-line" d="M82 45 L85 85 L80 125"/>
+                </svg>
+              </div>
+              <div class="hall__statue-name">Theron the Builder</div>
+            </div>
+
+            <div class="hall__statue-card" data-reveal data-cursor>
+              <svg viewBox="0 0 150 250" preserveAspectRatio="xMidYMax meet">
+                <path class="statue-stone" d="M75 8 Q56 8 51 22 L46 48 Q33 53 28 68 L23 98 L20 138 L18 178 L15 250 L135 250 L132 178 L130 138 L127 98 L122 68 Q117 53 104 48 L99 22 Q94 8 75 8 Z"/>
+                <path class="statue-shadow" d="M75 22 L75 250 L102 250 L99 178 L97 138 L92 98 L87 68 L85 48 L85 22 L75 22 Z" opacity="0.4"/>
+              </svg>
+              <div class="hall__statue-eyes"><span></span><span></span></div>
+              <div class="hall__statue-cracks">
+                <svg viewBox="0 0 150 250" preserveAspectRatio="none">
+                  <path class="crack-line" d="M58 55 L63 95 L56 135 L60 175 L54 215"/>
+                  <path class="crack-line" d="M88 35 L91 75 L85 115 L89 155"/>
+                </svg>
+              </div>
+              <div class="hall__statue-name">Lyra the Seer</div>
+            </div>
+          </div>
+
+          <div class="hall__symbols">
+            <div class="hall__symbol" data-reveal data-cursor>
+              <svg viewBox="0 0 30 30"><circle class="sym-stroke" cx="15" cy="15" r="12"/><path class="sym-stroke" d="M15 3 L15 27 M3 15 L27 15"/></svg>
+            </div>
+            <div class="hall__symbol" data-reveal data-cursor>
+              <svg viewBox="0 0 30 30"><polygon class="sym-stroke" points="15,3 27,24 3,24"/><circle class="sym-stroke" cx="15" cy="17" r="4"/></svg>
+            </div>
+            <div class="hall__symbol" data-reveal data-cursor>
+              <svg viewBox="0 0 30 30"><circle class="sym-stroke" cx="15" cy="15" r="12"/><circle class="sym-stroke" cx="15" cy="15" r="6"/></svg>
+            </div>
+            <div class="hall__symbol" data-reveal data-cursor>
+              <svg viewBox="0 0 30 30"><path class="sym-stroke" d="M15 3 L27 15 L15 27 L3 15 Z"/><circle class="sym-stroke" cx="15" cy="15" r="3"/></svg>
+            </div>
+            <div class="hall__symbol" data-reveal data-cursor>
+              <svg viewBox="0 0 30 30"><path class="sym-stroke" d="M5 5 L25 25 M25 5 L5 25"/><circle class="sym-stroke" cx="15" cy="15" r="10"/></svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FORGOTTEN LIBRARY -->
+      <section class="section library" id="library" aria-label="Chapter IV — The Forgotten Library">
+        <div class="section__inner library__inner">
+          <header class="section__header library__header">
+            <span class="section__index">Chapter IV</span>
+            <h2 class="library__title" data-splitting>The Forgotten Library</h2>
+            <p class="library__lead">
+              Knowledge suspended in stillness. Volumes that have not felt a reader's gaze in a thousand years.
+              Reach out — and the words will reach back.
+            </p>
+          </header>
+
+          <div class="library__symbols" aria-hidden="true">
+            <span>◈</span><span>⟁</span><span>✦</span><span>⟐</span>
+            <span>⬡</span><span>☉</span><span>⟡</span><span>✧</span>
+          </div>
+
+          <div class="library__books">
+            <article class="library__book" data-reveal data-cursor>
+              <div class="library__book-glyph">
+                <svg viewBox="0 0 60 60"><circle class="glyph-stroke" cx="30" cy="30" r="25"/><path class="glyph-stroke" d="M30 5 L30 55 M5 30 L55 30"/><circle class="glyph-fill" cx="30" cy="30" r="4"/></svg>
+              </div>
+              <h3 class="library__book-title">The Codex of Sands</h3>
+              <div class="library__book-era">First Era · Volume I</div>
+              <p class="library__book-text">"In the beginning, the desert was a garden. The first kings learned to speak with stone, and the stone obeyed."</p>
+            </article>
+
+            <article class="library__book" data-reveal data-cursor>
+              <div class="library__book-glyph">
+                <svg viewBox="0 0 60 60"><polygon class="glyph-stroke" points="30,5 55,22 45,52 15,52 5,22"/><circle class="glyph-fill" cx="30" cy="30" r="3"/></svg>
+              </div>
+              <h3 class="library__book-title">The Star Maps</h3>
+              <div class="library__book-era">Second Era · Volume VII</div>
+              <p class="library__book-text">"They charted the heavens with such precision that the stars themselves seemed to rearrange to match their drawings."</p>
+            </article>
+
+            <article class="library__book" data-reveal data-cursor>
+              <div class="library__book-glyph">
+                <svg viewBox="0 0 60 60"><path class="glyph-stroke" d="M30 5 L55 30 L30 55 L5 30 Z"/><path class="glyph-stroke" d="M15 30 L45 30 M30 15 L30 45"/></svg>
+              </div>
+              <h3 class="library__book-title">The Ritual Book</h3>
+              <div class="library__book-era">Third Era · Volume XII</div>
+              <p class="library__book-text">"Every dawn was an invocation. Every dusk, a gratitude. The civilization did not worship power — it conversed with it."</p>
+            </article>
+
+            <article class="library__book" data-reveal data-cursor>
+              <div class="library__book-glyph">
+                <svg viewBox="0 0 60 60"><circle class="glyph-stroke" cx="30" cy="30" r="25"/><circle class="glyph-stroke" cx="30" cy="30" r="15"/><circle class="glyph-stroke" cx="30" cy="30" r="5"/></svg>
+              </div>
+              <h3 class="library__book-title">The Lamentations</h3>
+              <div class="library__book-era">Final Era · Volume I</div>
+              <p class="library__book-text">"The sands came not as punishment but as sleep. We closed our eyes willingly, knowing someone would come to wake us."</p>
+            </article>
+
+            <article class="library__book" data-reveal data-cursor>
+              <div class="library__book-glyph">
+                <svg viewBox="0 0 60 60"><path class="glyph-stroke" d="M10 50 Q30 10 50 50"/><circle class="glyph-fill" cx="30" cy="20" r="3"/><circle class="glyph-fill" cx="15" cy="45" r="2"/><circle class="glyph-fill" cx="45" cy="45" r="2"/></svg>
+              </div>
+              <h3 class="library__book-title">The Book of Echoes</h3>
+              <div class="library__book-era">Unknown Era</div>
+              <p class="library__book-text">"Every word spoken in this hall has been remembered by the walls. Speak, and listen — they will repeat what you need to hear."</p>
+            </article>
+
+            <article class="library__book" data-reveal data-cursor>
+              <div class="library__book-glyph">
+                <svg viewBox="0 0 60 60"><path class="glyph-stroke" d="M30 5 L35 22 L52 22 L38 32 L43 50 L30 40 L17 50 L22 32 L8 22 L25 22 Z"/></svg>
+              </div>
+              <h3 class="library__book-title">The Genesis Scroll</h3>
+              <div class="library__book-era">Before the First Era</div>
+              <p class="library__book-text">"Before the first stone was placed, a vision was dreamt. The dreamer became the first king, and the dream became the city."</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- HIDDEN CHAMBER -->
+      <section class="section chamber" id="chamber" aria-label="Chapter V — The Hidden Chamber">
+        <div class="chamber__glow"></div>
+        <div class="section__inner chamber__inner">
+          <header class="section__header chamber__header">
+            <span class="section__index">Chapter V</span>
+            <h2 class="chamber__title" data-splitting>The Hidden Chamber</h2>
+            <p class="chamber__lead">
+              Beyond the library, a room that was never meant to be found.
+              Golden artifacts turn slowly in the dark, as if measuring time by their own rotation.
+            </p>
+          </header>
+
+          <div class="chamber__relics">
+            <div class="chamber__relic" data-reveal data-cursor>
+              <div class="chamber__relic-inner">
+                <svg viewBox="0 0 200 200">
+                  <ellipse class="relic-glow" cx="100" cy="100" rx="80" ry="80"/>
+                  <circle class="relic-gold" cx="100" cy="100" r="60" fill="none" stroke="currentColor" stroke-width="2"/>
+                  <circle class="relic-amber" cx="100" cy="100" r="40"/>
+                  <circle class="relic-gold" cx="100" cy="100" r="20"/>
+                  <path class="relic-dark" d="M100 40 L100 160 M40 100 L160 100" stroke="currentColor" stroke-width="1" fill="none"/>
+                  <circle class="relic-gold" cx="100" cy="40" r="5"/>
+                  <circle class="relic-gold" cx="100" cy="160" r="5"/>
+                  <circle class="relic-gold" cx="40" cy="100" r="5"/>
+                  <circle class="relic-gold" cx="160" cy="100" r="5"/>
+                </svg>
+              </div>
+              <div class="chamber__relic-name">The Sun Disc</div>
+            </div>
+
+            <div class="chamber__relic" data-reveal data-cursor>
+              <div class="chamber__relic-inner">
+                <svg viewBox="0 0 200 200">
+                  <ellipse class="relic-glow" cx="100" cy="100" rx="80" ry="80"/>
+                  <polygon class="relic-gold" points="100,30 150,70 130,160 70,160 50,70" fill="none" stroke="currentColor" stroke-width="2"/>
+                  <polygon class="relic-amber" points="100,55 130,80 120,140 80,140 70,80"/>
+                  <polygon class="relic-gold" points="100,80 115,95 110,125 90,125 85,95"/>
+                  <circle class="relic-gold" cx="100" cy="100" r="8"/>
+                </svg>
+              </div>
+              <div class="chamber__relic-name">The Compass Stone</div>
+            </div>
+
+            <div class="chamber__relic" data-reveal data-cursor>
+              <div class="chamber__relic-inner">
+                <svg viewBox="0 0 200 200">
+                  <ellipse class="relic-glow" cx="100" cy="100" rx="80" ry="80"/>
+                  <path class="relic-gold" d="M100 30 Q140 50 140 100 Q140 150 100 170 Q60 150 60 100 Q60 50 100 30 Z" fill="none" stroke="currentColor" stroke-width="2"/>
+                  <path class="relic-amber" d="M100 55 Q125 70 125 100 Q125 130 100 145 Q75 130 75 100 Q75 70 100 55 Z"/>
+                  <circle class="relic-gold" cx="100" cy="100" r="15"/>
+                  <path class="relic-dark" d="M100 70 L100 130 M70 100 L130 100" stroke="currentColor" stroke-width="0.5" fill="none"/>
+                </svg>
+              </div>
+              <div class="chamber__relic-name">The Orb of Aeons</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FINAL SANCTUARY -->
+      <section class="section sanctuary" id="sanctuary" aria-label="Chapter VI — The Final Sanctuary">
+        <div class="section__inner sanctuary__inner">
+          <div class="sanctuary__relic" aria-hidden="true">
+            <svg viewBox="0 0 200 200">
+              <circle class="relic-outer" cx="100" cy="100" r="90"/>
+              <circle class="relic-outer" cx="100" cy="100" r="70" opacity="0.6"/>
+              <polygon class="relic-outer" points="100,20 160,60 160,140 100,180 40,140 40,60" opacity="0.5"/>
+              <circle class="relic-inner" cx="100" cy="100" r="40"/>
+              <circle class="relic-core" cx="100" cy="100" r="15"/>
+              <path class="relic-outer" d="M100 10 L100 190 M10 100 L190 100" opacity="0.2"/>
+            </svg>
+          </div>
+
+          <div class="sanctuary__eyebrow" id="sanctuaryEyebrow">Chapter VI — The Heart</div>
+          <h2 class="sanctuary__message" data-splitting>The greatest civilizations are never truly forgotten.</h2>
+          <p class="sanctuary__sub" id="sanctuarySub">
+            They sleep beneath the sand, patient as stone, waiting for the one who remembers how to listen.
+          </p>
+          <div class="sanctuary__divider" id="sanctuaryDivider"></div>
+          <div class="sanctuary__end" id="sanctuaryEnd">Lost Civilization — End of Journey</div>
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="footer">
+        <div class="footer__divider"></div>
+        <div class="footer__mark">◈ Lost Civilization ◈</div>
+        <p class="footer__credit">A Cinematic Interactive Experience</p>
+      </footer>
+
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

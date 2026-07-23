@@ -1,0 +1,83 @@
+// ============================================================
+// COMPONENTS / PROGRESS INDICATOR
+// ============================================================
+
+@use '../abstracts/variables' as *;
+@use '../abstracts/mixins' as *;
+
+.progress {
+  position: fixed;
+  top: 50%;
+  right: $space-5;
+  transform: translateY(-50%);
+  z-index: $z-nav;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  align-items: flex-end;
+
+  @include tablet { display: none; }
+
+  &__track {
+    position: relative;
+    width: 1px;
+    height: 200px;
+    background: rgba($color-gold, 0.12);
+    overflow: hidden;
+  }
+
+  &__bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0%;
+    background: linear-gradient(to bottom, $color-gold, $color-amber);
+    box-shadow: 0 0 8px rgba($color-gold, 0.5);
+    transition: height 0.1s linear;
+  }
+
+  &__label {
+    @include label;
+    color: $color-text-faint;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.65rem;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    letter-spacing: 0.3em;
+  }
+}
+
+// Chapter dots alternative
+.progress-dots {
+  position: fixed;
+  left: $space-5;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: $z-nav;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+
+  @include tablet { display: none; }
+
+  &__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 1px solid rgba($color-gold, 0.3);
+    background: transparent;
+    transition: all $dur-base $ease-out;
+
+    &.is-active {
+      background: $color-gold;
+      border-color: $color-gold;
+      @include glow($color-gold, 0.5, 12px);
+      transform: scale(1.3);
+    }
+
+    &:hover {
+      border-color: $color-gold;
+    }
+  }
+}

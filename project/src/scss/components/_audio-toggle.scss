@@ -1,0 +1,73 @@
+// ============================================================
+// COMPONENTS / AUDIO TOGGLE
+// ============================================================
+
+@use '../abstracts/variables' as *;
+@use '../abstracts/mixins' as *;
+
+.audio-toggle {
+  position: fixed;
+  bottom: $space-5;
+  right: $space-5;
+  z-index: $z-nav;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  @include glass;
+  border: 1px solid rgba($color-gold, 0.2);
+  @include flex(row, center, center);
+  transition: border-color $dur-base $ease-out, transform $dur-base $ease-out;
+
+  &:hover {
+    border-color: $color-gold;
+    transform: scale(1.08);
+  }
+
+  &.is-playing {
+    border-color: rgba($color-gold, 0.5);
+    @include glow($color-gold, 0.3, 20px);
+  }
+
+  &__icon {
+    width: 20px;
+    height: 20px;
+    position: relative;
+    @include flex(row, center, flex-end, 2px);
+    height: 18px;
+
+    span {
+      display: block;
+      width: 2px;
+      background: $color-gold;
+      border-radius: 1px;
+      transition: height $dur-base $ease-out;
+      height: 4px;
+    }
+
+    span:nth-child(1) { height: 8px; }
+    span:nth-child(2) { height: 14px; }
+    span:nth-child(3) { height: 6px; }
+    span:nth-child(4) { height: 12px; }
+  }
+
+  &.is-playing &__icon span {
+    animation: audio-bar 1.2s ease-in-out infinite alternate;
+
+    &:nth-child(1) { animation-delay: 0s; }
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.4s; }
+    &:nth-child(4) { animation-delay: 0.1s; }
+  }
+
+  @include mobile {
+    width: 44px;
+    height: 44px;
+    bottom: $space-4;
+    right: $space-4;
+  }
+}
+
+@keyframes audio-bar {
+  0% { height: 4px; }
+  100% { height: 16px; }
+}

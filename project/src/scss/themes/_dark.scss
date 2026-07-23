@@ -1,0 +1,13 @@
+// ============================================================
+// THEMES / DARK
+// ============================================================
+
+@use '../abstracts/variables' as *;
+
+[data-theme='dark'] {
+  --color-bg: #{$color-bg-deep};
+  --color-bg-alt: #{$color-bg-secondary};
+  --color-text: #{$color-light};
+  --color-accent: #{$color-gold};
+  --color-glow: #{$color-amber};
+}

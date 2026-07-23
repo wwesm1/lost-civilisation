@@ -1,0 +1,134 @@
+// ============================================================
+// SECTIONS / HIDDEN CHAMBER
+// ============================================================
+
+@use '../abstracts/variables' as *;
+@use '../abstracts/mixins' as *;
+
+.chamber {
+  @include section;
+  @include vignette(0.5);
+  background:
+    radial-gradient(ellipse at 50% 40%, rgba($color-amber, 0.06), transparent 50%),
+    linear-gradient(to bottom, $color-bg-deep, $color-bg-secondary 50%, $color-bg-deep);
+  min-height: 130vh;
+  @include flex(column, center, center);
+  padding: $space-24 $space-6;
+
+  &__inner {
+    max-width: $container-wide;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    z-index: $z-content;
+  }
+
+  &__header {
+    margin-bottom: $space-12;
+  }
+
+  &__title {
+    font-size: $fs-h1;
+    color: $color-light;
+
+    .char { display: inline-block; opacity: 0; will-change: transform, opacity; }
+  }
+
+  &__lead {
+    @include lead;
+    max-width: 600px;
+    margin: $space-4 auto 0;
+  }
+
+  // Relic display
+  &__relics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $space-8;
+    margin-top: $space-12;
+
+    @include tablet { grid-template-columns: 1fr; }
+  }
+
+  &__relic {
+    position: relative;
+    aspect-ratio: 1;
+    @include flex(row, center, center);
+    @include perspective(800px);
+    opacity: 0;
+    will-change: transform, opacity;
+
+    &-inner {
+      width: 80%;
+      height: 80%;
+      position: relative;
+      @include preserve-3d;
+      animation: relic-rotate 20s linear infinite;
+      transition: animation-duration $dur-slow;
+    }
+
+    &:hover &-inner {
+      animation-duration: 6s;
+    }
+
+    svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 0 20px rgba($color-amber, 0.3));
+    }
+
+    .relic-gold { fill: $color-gold; }
+    .relic-amber { fill: $color-amber; }
+    .relic-dark { fill: $color-stone; }
+    .relic-glow { fill: rgba($color-amber, 0.1); }
+
+    // Reflection
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -15%;
+      left: 10%;
+      width: 80%;
+      height: 20%;
+      background: radial-gradient(ellipse, rgba($color-gold, 0.15), transparent 70%);
+      filter: blur(8px);
+    }
+  }
+
+  &__relic-name {
+    @include label;
+    color: $color-gold;
+    font-size: 0.65rem;
+    margin-top: $space-4;
+    opacity: 0;
+    transition: opacity $dur-base $ease-out;
+  }
+
+  &__relic:hover &__relic-name {
+    opacity: 1;
+  }
+
+  // Central glow
+  &__glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba($color-amber, 0.05), transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+    animation: chamber-glow 6s ease-in-out infinite;
+  }
+}
+
+@keyframes relic-rotate {
+  from { transform: rotateY(0deg) rotateX(10deg); }
+  to { transform: rotateY(360deg) rotateX(10deg); }
+}
+
+@keyframes chamber-glow {
+  0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.1); }
+}

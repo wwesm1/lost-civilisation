@@ -1,0 +1,30 @@
+// ============================================================
+// ABSTRACTS / FUNCTIONS
+// ============================================================
+
+@use 'variables' as *;
+
+// Convert px to rem
+@function rem($px) {
+  @return calc($px / 16px) * 1rem;
+}
+
+// Convert px to em (relative to font-size)
+@function em($px, $base: 16px) {
+  @return calc($px / $base) * 1em;
+}
+
+// Opacity helper
+@function alpha($color, $amount) {
+  @return rgba($color, $amount);
+}
+
+// Darken/lighten with gold tint
+@function gold-tint($weight: 50%) {
+  @return mix($color-gold, $color-bg-secondary, $weight);
+}
+
+// Spacing scale
+@function space($n) {
+  @return $n * 0.5rem;
+}

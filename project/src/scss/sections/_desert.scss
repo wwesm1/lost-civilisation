@@ -1,0 +1,120 @@
+// ============================================================
+// SECTIONS / DESERT
+// ============================================================
+
+@use '../abstracts/variables' as *;
+@use '../abstracts/mixins' as *;
+
+.desert {
+  @include section;
+  @include vignette(0.6);
+  background: linear-gradient(to bottom, $color-bg-deep, $color-bg-secondary 60%, $color-bg-deep);
+  min-height: 120vh;
+  @include flex(column, center, center);
+  padding: $space-24 $space-6;
+
+  &__inner {
+    max-width: $container-wide;
+    width: 100%;
+    position: relative;
+    z-index: $z-content;
+  }
+
+  &__header {
+    text-align: center;
+    margin-bottom: $space-16;
+  }
+
+  &__title {
+    font-size: $fs-h1;
+    color: $color-light;
+    margin-bottom: $space-4;
+
+    .char { display: inline-block; opacity: 0; will-change: transform, opacity; }
+  }
+
+  &__lead {
+    @include lead;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  // Broken statues row
+  &__statues {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: $space-12;
+    margin-top: $space-16;
+    flex-wrap: wrap;
+
+    @include tablet { gap: $space-6; }
+  }
+
+  &__statue {
+    position: relative;
+    width: 120px;
+    height: 280px;
+    opacity: 0;
+    will-change: transform, opacity;
+
+    @include tablet { width: 90px; height: 220px; }
+    @include mobile { width: 70px; height: 180px; }
+
+    svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 10px 20px rgba($color-black, 0.6));
+    }
+
+    .statue-body { fill: $color-stone; }
+    .statue-dark { fill: rgba($color-black, 0.4); }
+    .statue-crack {
+      stroke: rgba($color-amber, 0.15);
+      stroke-width: 0.5;
+      fill: none;
+    }
+
+    // Wind-blown sand at base
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 140%;
+      height: 30px;
+      background: radial-gradient(ellipse, rgba($color-sand, 0.2), transparent 70%);
+    }
+  }
+
+  // Sand drift particles
+  &__drift {
+    @include absolute-fill;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  &__columns {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: 100%;
+    margin-top: $space-12;
+    padding: 0 $space-8;
+    opacity: 0;
+    will-change: opacity, transform;
+
+    @include tablet { display: none; }
+  }
+
+  &__column {
+    width: 60px;
+    height: 200px;
+    position: relative;
+
+    svg { width: 100%; height: 100%; }
+    .col-fill { fill: $color-stone; }
+    .col-cap { fill: rgba($color-sand, 0.4); }
+  }
+}

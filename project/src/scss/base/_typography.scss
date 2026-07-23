@@ -1,0 +1,63 @@
+// ============================================================
+// BASE / TYPOGRAPHY
+// ============================================================
+
+@use '../abstracts/variables' as *;
+@use '../abstracts/mixins' as *;
+
+body {
+  font-family: $font-sans;
+  font-size: $fs-body;
+  font-weight: 400;
+  color: $color-text;
+  background-color: $color-bg-deep;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-serif;
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+}
+
+h1 {
+  font-size: $fs-h1;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: $fs-h2;
+}
+
+h3 {
+  font-size: $fs-h3;
+}
+
+p {
+  font-family: $font-sans;
+  font-size: $fs-body;
+  line-height: 1.7;
+  color: $color-text-muted;
+}
+
+.eyebrow {
+  @include label;
+  color: $color-gold;
+  display: inline-block;
+  margin-bottom: $space-3;
+}
+
+.lead {
+  font-family: $font-serif;
+  font-size: clamp(1.3rem, 2vw, 1.8rem);
+  line-height: 1.5;
+  color: $color-text;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.section__index {
+  @include label;
+  color: $color-text-faint;
+  font-variant-numeric: tabular-nums;
+}

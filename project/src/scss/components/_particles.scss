@@ -1,0 +1,95 @@
+// ============================================================
+// COMPONENTS / PARTICLES (Canvas wrapper)
+// ============================================================
+
+@use '../abstracts/variables' as *;
+@use '../abstracts/mixins' as *;
+@use 'sass:math';
+
+.particles {
+  @include absolute-fill;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.8;
+}
+
+// Embers floating up
+.embers {
+  @include absolute-fill;
+  pointer-events: none;
+  z-index: 2;
+  overflow: hidden;
+
+  span {
+    position: absolute;
+    bottom: -10px;
+    width: 3px;
+    height: 3px;
+    background: $color-amber;
+    border-radius: 50%;
+    opacity: 0;
+    box-shadow: 0 0 6px rgba($color-amber, 0.8);
+    animation: ember-rise 8s ease-out infinite;
+
+    @for $i from 1 through 25 {
+      &:nth-child(#{$i}) {
+        left: math.random(100) * 1%;
+        animation-delay: random(80) * 0.1s;
+        animation-duration: 5s + random(50) * 0.1s;
+      }
+    }
+  }
+}
+
+@keyframes ember-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.5);
+  }
+  10% { opacity: 0.8; }
+  90% { opacity: 0.4; }
+  100% {
+    opacity: 0;
+    transform: translateY(-100vh) scale(1.2);
+  }
+}
+
+// Light rays
+.light-rays {
+  @include absolute-fill;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: -20%;
+    width: 40%;
+    height: 140%;
+    background: linear-gradient(to bottom,
+      rgba($color-amber, 0.04) 0%,
+      rgba($color-amber, 0.06) 40%,
+      transparent 80%);
+    filter: blur(40px);
+    transform-origin: top center;
+  }
+
+  &::before {
+    left: 10%;
+    transform: rotate(8deg);
+    animation: ray-drift 14s ease-in-out infinite alternate;
+  }
+
+  &::after {
+    right: 10%;
+    transform: rotate(-8deg);
+    animation: ray-drift 18s ease-in-out infinite alternate-reverse;
+  }
+}
+
+@keyframes ray-drift {
+  0% { opacity: 0.5; transform: rotate(8deg) translateX(0); }
+  100% { opacity: 0.8; transform: rotate(12deg) translateX(30px); }
+}

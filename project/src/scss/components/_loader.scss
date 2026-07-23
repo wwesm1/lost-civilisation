@@ -1,0 +1,152 @@
+// ============================================================
+// COMPONENTS / LOADER
+// ============================================================
+
+@use '../abstracts/variables' as *;
+@use '../abstracts/mixins' as *;
+
+.loader {
+  @include fixed-fill;
+  z-index: $z-loader;
+  background: $color-bg-deep;
+  @include flex(column, center, center);
+  overflow: hidden;
+
+  &__symbol {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    margin-bottom: $space-8;
+
+    svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+
+      .ring {
+        fill: none;
+        stroke: rgba($color-gold, 0.25);
+        stroke-width: 0.5;
+      }
+
+      .ring-outer {
+        animation: loader-rotate 8s linear infinite;
+        transform-origin: center;
+      }
+
+      .ring-inner {
+        animation: loader-rotate 5s linear infinite reverse;
+        transform-origin: center;
+      }
+
+      .glyph {
+        fill: none;
+        stroke: $color-gold;
+        stroke-width: 1.2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-dasharray: 300;
+        stroke-dashoffset: 300;
+        animation: loader-draw 2.5s $ease-out forwards;
+      }
+
+      .glyph-dot {
+        fill: $color-gold;
+        opacity: 0;
+        animation: loader-fade 1s 2s forwards;
+      }
+    }
+  }
+
+  &__text {
+    @include label;
+    color: $color-gold;
+    letter-spacing: 0.5em;
+    margin-bottom: $space-4;
+    opacity: 0;
+    animation: loader-fade 1s 1.5s forwards;
+  }
+
+  &__progress {
+    width: 240px;
+    height: 1px;
+    background: rgba($color-gold, 0.15);
+    position: relative;
+    overflow: hidden;
+
+    &-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, $color-gold, $color-amber);
+      box-shadow: 0 0 10px rgba($color-gold, 0.6);
+      transition: width 0.1s linear;
+    }
+  }
+
+  &__percent {
+    @include label;
+    color: $color-text-faint;
+    margin-top: $space-3;
+    font-variant-numeric: tabular-nums;
+  }
+
+  // Exit animation
+  &.is-exiting {
+    animation: loader-exit 1.2s $ease-power forwards;
+  }
+}
+
+@keyframes loader-rotate {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes loader-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes loader-fade {
+  to { opacity: 1; }
+}
+
+@keyframes loader-exit {
+  0% {
+    clip-path: inset(0 0 0 0);
+  }
+  100% {
+    clip-path: inset(0 0 100% 0);
+  }
+}
+
+// Dust particles during load
+.loader__dust {
+  @include absolute-fill;
+  pointer-events: none;
+
+  span {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: $color-gold;
+    border-radius: 50%;
+    opacity: 0;
+    animation: loader-dust 3s ease-out infinite;
+
+    @for $i from 1 through 30 {
+      &:nth-child(#{$i}) {
+        left: random(100) * 1%;
+        top: random(100) * 1%;
+        animation-delay: random(30) * 0.1s;
+        animation-duration: 2s + random(30) * 0.1s;
+      }
+    }
+  }
+}
+
+@keyframes loader-dust {
+  0% { opacity: 0; transform: translateY(20px) scale(0); }
+  50% { opacity: 0.6; }
+  100% { opacity: 0; transform: translateY(-40px) scale(1.5); }
+}

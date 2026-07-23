@@ -1,0 +1,115 @@
+// ============================================================
+// BASE / GLOBAL
+// ============================================================
+
+@use '../abstracts/variables' as *;
+@use '../abstracts/mixins' as *;
+
+#app {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  z-index: $z-base;
+}
+
+// Ambient canvas backdrop
+.ambient-canvas {
+  @include fixed-fill;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+// Fog overlay
+.fog-overlay {
+  @include fixed-fill;
+  pointer-events: none;
+  z-index: 1;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba($color-amber, 0.06), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 50% 100%, rgba($color-sand, 0.04), transparent 50%);
+  mix-blend-mode: screen;
+}
+
+// Vignette
+.vignette {
+  @include fixed-fill;
+  pointer-events: none;
+  z-index: 2;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba($color-black, 0.5) 100%);
+}
+
+// Grain
+.grain {
+  @include fixed-fill;
+  pointer-events: none;
+  z-index: 3;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+  animation: grain-shift 0.5s steps(4) infinite;
+}
+
+@keyframes grain-shift {
+  0%   { transform: translate(0, 0); }
+  25%  { transform: translate(-2%, 1%); }
+  50%  { transform: translate(1%, -1%); }
+  75%  { transform: translate(-1%, 2%); }
+  100% { transform: translate(2%, -2%); }
+}
+
+main {
+  position: relative;
+  z-index: $z-content;
+}
+
+// Shared section layout
+.section {
+  @include section;
+  @include vignette(0.65);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: $space-24 $space-6;
+  background: $color-bg-deep;
+
+  &__inner {
+    width: 100%;
+    max-width: $container-narrow;
+    margin: 0 auto;
+    position: relative;
+    z-index: $z-content;
+  }
+
+  &__header {
+    text-align: center;
+    margin-bottom: $space-10;
+  }
+}
+
+// Utility
+.text-gold { color: $color-gold; }
+.text-amber { color: $color-amber; }
+.text-center { text-align: center; }
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@include reduced-motion {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

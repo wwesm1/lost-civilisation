@@ -1,0 +1,17 @@
+// ============================================================
+// VENDORS / SPLITTING.JS
+// ============================================================
+
+.splitting .char {
+  display: inline-block;
+}
+
+.splitting .word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+}
+
+.splitting .word .char {
+  will-change: transform;
+}

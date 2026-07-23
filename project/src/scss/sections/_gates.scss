@@ -1,0 +1,186 @@
+// ============================================================
+// SECTIONS / ANCIENT GATES
+// ============================================================
+
+@use '../abstracts/variables' as *;
+@use '../abstracts/mixins' as *;
+
+.gates {
+  @include section;
+  @include vignette(0.7);
+  background: linear-gradient(to bottom, $color-bg-deep, $color-bg-secondary);
+  min-height: 140vh;
+  @include flex(column, center, center);
+  padding: $space-24 $space-6;
+  overflow: hidden;
+
+  &__inner {
+    text-align: center;
+    max-width: $container-narrow;
+    position: relative;
+    z-index: $z-content;
+  }
+
+  &__header {
+    margin-bottom: $space-12;
+  }
+
+  &__title {
+    font-size: $fs-h1;
+    color: $color-light;
+    margin-bottom: $space-4;
+
+    .char { display: inline-block; opacity: 0; will-change: transform, opacity; }
+  }
+
+  &__lead {
+    @include lead;
+  }
+
+  // The gate doors
+  &__doors {
+    position: relative;
+    width: min(600px, 85vw);
+    height: min(500px, 60vh);
+    margin: $space-10 auto 0;
+    @include perspective(1200px);
+  }
+
+  &__frame {
+    @include absolute-fill;
+    border: 2px solid rgba($color-stone, 0.6);
+    border-radius: 8px 8px 0 0;
+    box-shadow:
+      inset 0 0 60px rgba($color-black, 0.8),
+      0 0 80px rgba($color-black, 0.6);
+    background: linear-gradient(to bottom, $color-bg-secondary, $color-bg-deep);
+    overflow: hidden;
+  }
+
+  &__arch {
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120%;
+    height: 120px;
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+    background: $color-bg-secondary;
+    border: 2px solid rgba($color-stone, 0.6);
+    border-bottom: none;
+    z-index: 0;
+  }
+
+  &__door {
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    background:
+      linear-gradient(135deg, $color-stone 0%, rgba($color-bg-secondary, 0.95) 100%);
+    border: 1px solid rgba($color-sand, 0.2);
+    will-change: transform;
+    transform-origin: center left;
+    z-index: 2;
+    overflow: hidden;
+
+    // Carved pattern
+    &::before {
+      content: '';
+      @include absolute-fill;
+      background:
+        repeating-linear-gradient(
+          0deg,
+          transparent 0,
+          transparent 40px,
+          rgba($color-sand, 0.08) 40px,
+          rgba($color-sand, 0.08) 42px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          transparent 0,
+          transparent 40px,
+          rgba($color-sand, 0.08) 40px,
+          rgba($color-sand, 0.08) 42px
+        );
+    }
+
+    // Door handle / emblem
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 50px;
+      height: 50px;
+      border: 2px solid rgba($color-gold, 0.3);
+      border-radius: 50%;
+      transform: translateY(-50%);
+    }
+  }
+
+  &__door--left {
+    left: 0;
+    border-radius: 8px 0 0 0;
+    transform-origin: left center;
+
+    &::after { right: 20px; }
+  }
+
+  &__door--right {
+    right: 0;
+    border-radius: 0 8px 0 0;
+    transform-origin: right center;
+
+    &::after { left: 20px; }
+  }
+
+  // Light escaping through doors
+  &__light {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 80%;
+    background: linear-gradient(to bottom,
+      rgba($color-amber, 0.8),
+      rgba($color-gold, 0.4),
+      transparent);
+    filter: blur(8px);
+    opacity: 0;
+    will-change: opacity, width;
+    z-index: 1;
+    box-shadow: 0 0 40px rgba($color-amber, 0.5);
+  }
+
+  // Dust falling
+  &__dust {
+    @include absolute-fill;
+    pointer-events: none;
+    z-index: 3;
+
+    span {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: $color-sand;
+      border-radius: 50%;
+      opacity: 0;
+      animation: gate-dust 4s ease-in infinite;
+
+      @for $i from 1 through 15 {
+        &:nth-child(#{$i}) {
+          left: 45% + random(10) - 5%;
+          top: random(30) * 1%;
+          animation-delay: random(40) * 0.1s;
+        }
+      }
+    }
+  }
+}
+
+@keyframes gate-dust {
+  0% { opacity: 0; transform: translateY(-10px); }
+  20% { opacity: 0.6; }
+  100% { opacity: 0; transform: translateY(300px); }
+}
